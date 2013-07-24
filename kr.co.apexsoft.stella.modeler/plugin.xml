@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="kr.co.apexsoft.stella.modeler.ui.tester.UMLPropertyTester"
+            id="kr.co.apexsoft.stella.modeler.ui.umlTester"
+            namespace="kr.co.apexsoft.stella.modeler.ui.umlTester"
+            properties="isNamedElement, isRootModel, isModel"
+            type="org.eclipse.jface.viewers.IStructuredSelection">
+      </propertyTester>
+      <propertyTester
+            class="kr.co.apexsoft.stella.modeler.ui.tester.GMFPropertyTester"
+            id="kr.co.apexsoft.stella.modeler.ui.gmfTester"
+            namespace="kr.co.apexsoft.stella.modeler.ui.gmfTester"
+            properties="isDiagram"
+            type="org.eclipse.jface.viewers.IStructuredSelection">
+      </propertyTester>
+   </extension>
+
+</plugin>

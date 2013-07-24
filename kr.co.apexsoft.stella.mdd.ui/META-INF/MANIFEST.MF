@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stella UI
+Bundle-SymbolicName: kr.co.apexsoft.stella.mdd.ui;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: kr.co.apexsoft.stella.mdd.ui.Activator
+Bundle-Vendor: Apexsoft.co.kr
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.expressions,
+ org.eclipse.uml2.uml,
+ kr.co.apexsoft.stella.mdd;bundle-version="0.1.0",
+ kr.co.apexsoft.stella.modeler;bundle-version="0.1.0",
+ kr.co.apexsoft.stella.uml;bundle-version="0.1.0",
+ kr.co.apexsoft.stella.cmm;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

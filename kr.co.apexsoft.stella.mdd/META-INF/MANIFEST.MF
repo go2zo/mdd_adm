@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stella Mdd
+Bundle-SymbolicName: kr.co.apexsoft.stella.mdd
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: kr.co.apexsoft.stella.mdd.Activator
+Bundle-Vendor: Apexsoft.co.kr
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore,
+ org.eclipse.jface,
+ org.eclipse.uml2.uml,
+ kr.co.apexsoft.stella.modeler;bundle-version="0.1.0",
+ kr.co.apexsoft.stella.uml;bundle-version="0.1.0",
+ kr.co.apexsoft.stella.cmm;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: kr.co.apexsoft.stella.mdd,
+ kr.co.apexsoft.stella.mdd.codegen,
+ kr.co.apexsoft.stella.mdd.util

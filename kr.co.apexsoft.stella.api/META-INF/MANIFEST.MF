@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stella API
+Bundle-SymbolicName: kr.co.apexsoft.stella.api;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: kr.co.apexsoft.stella.api.Activator
+Bundle-Vendor: Apexsoft.co.kr
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: kr.co.apexsoft.stella.api

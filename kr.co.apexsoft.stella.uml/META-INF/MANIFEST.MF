@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stella UML
+Bundle-SymbolicName: kr.co.apexsoft.stella.uml
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Apexsoft.co.kr
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.uml2.uml,
+ org.eclipse.gmf.runtime.notation
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: kr.co.apexsoft.stella.uml,
+ kr.co.apexsoft.stella.uml.ui,
+ kr.co.apexsoft.stella.uml.ui.diagram
