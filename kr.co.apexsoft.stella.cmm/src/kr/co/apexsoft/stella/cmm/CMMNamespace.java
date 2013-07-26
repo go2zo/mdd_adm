@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CMMNamespace extends CMMNamedElement {
+public class CMMNamespace implements CMMElement {
 	private String URI;
 	private String[] segments;
 	private List<CMMClass> memberClasses;

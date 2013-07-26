@@ -1,6 +1,6 @@
 package kr.co.apexsoft.stella.cmm;
 
-public interface CMMAbstractElement {
+public interface CMMAbstractableElement extends CMMElement {
 
 	boolean isAbstract();
 

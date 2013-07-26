@@ -3,12 +3,7 @@ package kr.co.apexsoft.stella.cmm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CMMClass extends CMMFinalElement implements CMMAbstractElement, CMMType {
-	
-	private CMMNamespace namespace;
-	
-	private List<CMMNamedElement> importElements;
-	private List<CMMClass> inheritances;
+public class CMMClass extends CMMPackagableElement implements CMMAbstractableElement {
 	
 	private List<CMMAttribute> ownerAttributes;
 	private List<CMMOperation> ownerOperations;
@@ -17,33 +12,16 @@ public class CMMClass extends CMMFinalElement implements CMMAbstractElement, CMM
 	private boolean isInterface;
 	private boolean isAbstract;
 	
-	public CMMNamespace getNamespace() {
-		return namespace;
-	}
-
-	public void setNamespace(CMMNamespace namespace) {
-		this.namespace = namespace;
-	}
-	
-	public List<CMMNamedElement> getImportElements() {
-		if (importElements == null) {
-			importElements = new ArrayList<>();
-		}
-		return importElements;
-	}
-	
-	public List<CMMClass> getInheritances() {
-		if (inheritances == null) {
-			inheritances = new ArrayList<>();
-		}
-		return inheritances;
-	}
-	
 	public List<CMMAttribute> getAttributes() {
 		if (ownerAttributes == null) {
 			ownerAttributes = new ArrayList<>();
 		}
 		return ownerAttributes;
+	}
+	
+	public void setAttributes(List<CMMAttribute> attributes) {
+		getAttributes().clear();
+		getAttributes().addAll(attributes);
 	}
 	
 	public List<CMMOperation> getOperations() {
@@ -53,6 +31,11 @@ public class CMMClass extends CMMFinalElement implements CMMAbstractElement, CMM
 		return ownerOperations;
 	}
 	
+	public void setOperations(List<CMMOperation> operations) {
+		getOperations().clear();
+		getOperations().addAll(operations);
+	}
+	
 	public List<CMMClass> getNestedClasses() {
 		if (nestedClasses == null) {
 			nestedClasses = new ArrayList<>();
@@ -60,6 +43,11 @@ public class CMMClass extends CMMFinalElement implements CMMAbstractElement, CMM
 		return nestedClasses;
 	}
 
+	public void setNestedClasses(List<CMMClass> nestedClasses) {
+		getNestedClasses().clear();
+		getNestedClasses().addAll(nestedClasses);
+	}
+	
 	public boolean isInterface() {
 		return isInterface;
 	}

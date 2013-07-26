@@ -1,26 +1,32 @@
 package kr.co.apexsoft.stella.mdd.codegen;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import kr.co.apexsoft.stella.cmm.CMMAttribute;
 import kr.co.apexsoft.stella.cmm.CMMClass;
 import kr.co.apexsoft.stella.cmm.CMMElement;
+import kr.co.apexsoft.stella.cmm.CMMEnum;
+import kr.co.apexsoft.stella.cmm.CMMEnumElement;
 import kr.co.apexsoft.stella.cmm.CMMOperation;
+import kr.co.apexsoft.stella.cmm.CMMPackagableElement;
 import kr.co.apexsoft.stella.cmm.CMMParameter;
+import kr.co.apexsoft.stella.cmm.CMMPrimitiveType;
 import kr.co.apexsoft.stella.cmm.CMMType;
 import kr.co.apexsoft.stella.cmm.CMMVisibilityKind;
-import kr.co.apexsoft.stella.mdd.util.InteractionUtil;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.osgi.baseadaptor.loader.FragmentClasspath;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Collaboration;
 import org.eclipse.uml2.uml.CombinedFragment;
 import org.eclipse.uml2.uml.ConnectableElement;
+import org.eclipse.uml2.uml.Enumeration;
+import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.ExecutionSpecification;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.InteractionFragment;
@@ -31,6 +37,7 @@ import org.eclipse.uml2.uml.Interface;
 import org.eclipse.uml2.uml.Lifeline;
 import org.eclipse.uml2.uml.Message;
 import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
+import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.OccurrenceSpecification;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Package;
@@ -38,96 +45,101 @@ import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
+import org.eclipse.uml2.uml.VisibilityKind;
 
 public class CMMTransformer {
+	
+	private Set<CMMElement> cachedElements = new HashSet<>();
 	
 	public CMMTransformer() {
 		
 	}
 	
 	public List<CMMElement> transform(EObject element) {
-		List<CMMElement> result = new ArrayList<>();
-		
 		if (element instanceof Package) {
-			result.addAll(transformPackage((Package) element));
-		} else if (element instanceof Classifier) {
-			transformClassifier((Classifier) element, result);
+			transformPackage((Package) element);
+		} else if (element instanceof Type) {
+			transformType((Type) element);
 		}
 		
-		return result;
+		return new ArrayList<>(cachedElements);
 	}
 	
 	public List<CMMElement> transforms(List<EObject> elements) {
-		List<CMMElement> result = new ArrayList<>();
-		
 		Iterator<EObject> iterator = elements.iterator();
 		while (iterator.hasNext()) {
 			EObject element = iterator.next();
-			result.addAll(transform(element));
+			transform(element);
 		}
 		
-		return result;
+		return new ArrayList<>(cachedElements);
 	}
 
-	private List<CMMElement> transformPackage(Package _package) {
-		String id = _package.eResource().getURIFragment(_package);
-		return null;
+	private void transformPackage(Package _package) {
+		List<NamedElement> members = _package.getOwnedMembers();
+		for (NamedElement member : members) {
+			if (member instanceof Class) {
+				transformClass((Class) member);
+			}
+		}
 	}
 
-	private void transformClassifier(Classifier _classifier, List<CMMElement> result) {
-		if (_classifier instanceof Interface) {
-			result.add(makeCMMClass(_classifier));
-		} else if (_classifier instanceof Collaboration) {
-			transformCollaboration((Collaboration) _classifier, result);
-		} else if (_classifier instanceof Class) {
-			transformClass((Class) _classifier, result);
+	private void transformType(Type _type) {
+		if (_type instanceof Classifier) {
+			transformClassifier((Classifier) _type);
 		}
 	}
 	
-	private void transformCollaboration(Collaboration _collaboration, List<CMMElement> result) {
+	private void transformClassifier(Classifier _classifier) {
+		if (_classifier instanceof Interface) {
+			cachedElements.add(makeCMMClass(_classifier));
+		} else if (_classifier instanceof Collaboration) {
+			transformCollaboration((Collaboration) _classifier);
+		} else if (_classifier instanceof Class) {
+			transformClass((Class) _classifier);
+		}
+	}
+	
+	private void transformCollaboration(Collaboration _collaboration) {
 		List<Behavior> behaviors = _collaboration.getOwnedBehaviors();
 		for (Behavior behavior : behaviors) {
-			transformBehavior(behavior, result);
+			transformBehavior(behavior);
 		}
 	}
 	
-	private void transformClass(Class _class, List<CMMElement> result) {
+	private void transformClass(Class _class) {
 		if (_class instanceof Behavior) {
-			transformBehavior((Behavior) _class, result);
+			transformBehavior((Behavior) _class);
 		} else {
-			result.add(makeCMMClass(_class));
+			cachedElements.add(makeCMMClass(_class));
 		}
 	}
 	
-	private void transformBehavior(Behavior _behavior, List<CMMElement> result) {
+	private void transformBehavior(Behavior _behavior) {
 		if (_behavior instanceof Interaction) {
-			transformInteraction((Interaction) _behavior, result);
+			transformInteraction((Interaction) _behavior);
 		}
 	}
 	
-	private void transformInteraction(Interaction _interaction, List<CMMElement> result) {
+	private void transformInteraction(Interaction _interaction) {
 		List<Lifeline> lifelines = _interaction.getLifelines();
-		List<InteractionFragment> fragments = _interaction.getFragments();
 		
-		List<Message> messages = _interaction.getMessages();
-		
-		for (InteractionFragment fragment : fragments) {
-			
+		for (Lifeline lifeline : lifelines) {
+			transformLifeline(lifeline);
 		}
-		
-		Lifeline significantLifeline = InteractionUtil.getSignificantLifeline(_interaction);
-		try {
-			significantLifeline.getRelationships();
-			ConnectableElement represents = significantLifeline.getRepresents();
-			Type type = represents.getType();
-			
-			if (type instanceof Class) {
-				
-			}
-			CMMOperation cmmOp = null;
-		} catch (NullPointerException e) {
-			e.printStackTrace();
+	}
+	
+	private void transformLifeline(Lifeline _lifeline) {
+		Type lifelineType = getLifelineType(_lifeline);
+		transformType(lifelineType);
+	}
+	
+	private Type getLifelineType(Lifeline _lifeline) {
+		ConnectableElement represents = _lifeline.getRepresents();
+		if (represents != null) {
+			return represents.getType();
 		}
+		return null;
 	}
 	
 	private void transformFragment(InteractionFragment _fragment, List<CMMElement> result) {
@@ -160,6 +172,14 @@ public class CMMTransformer {
 		}
 	}
 	
+	private CMMEnum transformEnum(Enumeration _enum) {
+		CMMEnum cmmEnum = null;
+		
+		
+		
+		return cmmEnum;
+	}
+	
 	private CMMClass makeCMMClass(Classifier _classifier) {
 		CMMClass cmmClass = new CMMClass();
 		
@@ -170,8 +190,7 @@ public class CMMTransformer {
 		cmmClass.setFinal(_classifier.isLeaf());
 		cmmClass.setInterface(_classifier instanceof Interface);
 		
-		CMMVisibilityKind visibilityKind = CMMVisibilityKind
-				.valueOf(_classifier.getVisibility().getName());
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_classifier.getVisibility());
 		cmmClass.setVisibilityKind(visibilityKind);
 
 		List<Property> attributes = _classifier.getAllAttributes();
@@ -200,6 +219,9 @@ public class CMMTransformer {
 		cmmAttr.setFinal(_attribute.isLeaf());
 		cmmAttr.setStatic(_attribute.isStatic());
 		
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_attribute.getVisibility());
+		cmmAttr.setVisibilityKind(visibilityKind);
+		
 		return cmmAttr;
 	}
 	
@@ -215,6 +237,9 @@ public class CMMTransformer {
 		cmmOp.setAbstract(_operation.isAbstract());
 		cmmOp.setFinal(_operation.isLeaf());
 		cmmOp.setStatic(_operation.isStatic());
+		
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_operation.getVisibility());
+		cmmOp.setVisibilityKind(visibilityKind);
 		
 		List<Parameter> parameters = _operation.getOwnedParameters();
 		for (Parameter param : parameters) {
@@ -240,10 +265,83 @@ public class CMMTransformer {
 		CMMType cmmType = null;
 		
 		if (_type instanceof PrimitiveType) {
-			String name = ((PrimitiveType) _type).getName();
+			cmmType = getCMMPrimitiveType((PrimitiveType) _type);
+		} else if (_type instanceof Enumeration) {
+			cmmType = makeCMMEnum((Enumeration) _type);
+		} else if (_type instanceof Class) {
+			cmmType = makeCMMClass((Class) _type);
 		}
 		
 		return cmmType;
 	}
 	
+	private CMMEnum makeCMMEnum(Enumeration _enum) {
+		CMMEnum cmmEnum = new CMMEnum();
+		
+		cmmEnum.setName(_enum.getName());
+		cmmEnum.setDescription(""); // TODO
+		
+		cmmEnum.setFinal(_enum.isLeaf());
+		
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_enum.getVisibility());
+		cmmEnum.setVisibilityKind(visibilityKind);
+		
+		for (EnumerationLiteral literal : _enum.getOwnedLiterals()) {
+			cmmEnum.getEnumElements().add(makeCMMEnumElement(literal));
+		}
+		
+		return cmmEnum;
+	}
+	
+	private CMMEnumElement makeCMMEnumElement(EnumerationLiteral _literal) {
+		CMMEnumElement enumElement = new CMMEnumElement();
+		
+		enumElement.setName(_literal.getName());
+		enumElement.setDescription(""); // TODO
+		
+		return enumElement;
+	}
+	
+	private CMMVisibilityKind getCMMVisibilityKind(VisibilityKind visibilityKind) {
+		switch (visibilityKind.getValue()) {
+		case VisibilityKind.PUBLIC:
+			return CMMVisibilityKind.PUBLIC;
+		case VisibilityKind.PRIVATE:
+			return CMMVisibilityKind.PRIVATE;
+		case VisibilityKind.PROTECTED:
+			return CMMVisibilityKind.PROTECTED;
+		case VisibilityKind.PACKAGE:
+			return CMMVisibilityKind.PACKAGE;
+		default:
+			return CMMVisibilityKind.PUBLIC;	
+		}
+	}
+	
+	private CMMPrimitiveType getCMMPrimitiveType(PrimitiveType primitiveType) {
+		for (CMMPrimitiveType type : CMMPrimitiveType.values()) {
+			if (type.getName().equalsIgnoreCase(primitiveType.getName())) {
+				return type;
+			}
+		}
+		return null;
+	}
+	
+//	private CMMClass getCMMClass(Class _class) {
+//		String fullPath = _class.getName();
+//		
+//		if (_class.getPackage() != null) {
+//			fullPath = _class.getPackage().getURI() + "." + fullPath;
+//		}
+//		
+//		for (CMMElement cmmElement : cachedElements) {
+//			if (cmmElement instanceof CMMPackagableElement) {
+//				String fp = ((CMMPackagableElement) cmmElement).getFullPath();
+//				if (fullPath.equals(fp)) {
+//					return cmmElement;
+//				}
+//			}
+//		}
+//		
+//		return null;
+//	}
 }

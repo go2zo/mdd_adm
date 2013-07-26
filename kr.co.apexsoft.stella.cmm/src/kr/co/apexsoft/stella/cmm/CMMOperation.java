@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CMMOperation extends CMMRedefinedElement
-		implements CMMAbstractElement {
+		implements CMMAbstractableElement {
 
 	private List<CMMParameter> ownedParameters;
 	
@@ -19,11 +19,21 @@ public class CMMOperation extends CMMRedefinedElement
 		return ownedParameters;
 	}
 	
+	public void setParameters(List<CMMParameter> parapeters) {
+		getParameters().clear();
+		getParameters().addAll(parapeters);
+	}
+	
 	public List<CMMStatement> getStatements() {
 		if (statements == null) {
 			statements = new ArrayList<>();
 		}
 		return statements;
+	}
+	
+	public void setStatements(List<CMMStatement> statements) {
+		getStatements().clear();
+		getStatements().addAll(statements);
 	}
 	
 	public CMMType getReturnValue() {
