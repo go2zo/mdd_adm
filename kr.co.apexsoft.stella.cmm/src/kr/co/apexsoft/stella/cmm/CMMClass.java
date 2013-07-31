@@ -3,7 +3,7 @@ package kr.co.apexsoft.stella.cmm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CMMClass extends CMMPackagableElement implements CMMAbstractableElement {
+public class CMMClass extends CMMPackageableElement implements CMMAbstractableElement {
 	
 	private List<CMMAttribute> ownerAttributes;
 	private List<CMMOperation> ownerOperations;

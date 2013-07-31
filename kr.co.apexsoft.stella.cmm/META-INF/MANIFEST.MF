@@ -7,4 +7,6 @@ Bundle-Vendor: Apexsoft.co.kr
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: kr.co.apexsoft.stella.cmm
+Export-Package: kr.co.apexsoft.stella.cmm,
+ kr.co.apexsoft.stella.cmm.inline
+Bundle-ClassPath: .

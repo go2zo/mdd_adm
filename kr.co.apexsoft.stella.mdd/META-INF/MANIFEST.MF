@@ -18,3 +18,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: kr.co.apexsoft.stella.mdd,
  kr.co.apexsoft.stella.mdd.codegen,
  kr.co.apexsoft.stella.mdd.util
+Bundle-ClassPath: .,
+ lib/velocity-1.7-dep.jar

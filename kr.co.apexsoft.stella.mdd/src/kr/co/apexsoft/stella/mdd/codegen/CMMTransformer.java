@@ -11,8 +11,9 @@ import kr.co.apexsoft.stella.cmm.CMMClass;
 import kr.co.apexsoft.stella.cmm.CMMElement;
 import kr.co.apexsoft.stella.cmm.CMMEnum;
 import kr.co.apexsoft.stella.cmm.CMMEnumElement;
+import kr.co.apexsoft.stella.cmm.CMMNamespace;
 import kr.co.apexsoft.stella.cmm.CMMOperation;
-import kr.co.apexsoft.stella.cmm.CMMPackagableElement;
+import kr.co.apexsoft.stella.cmm.CMMPackageableElement;
 import kr.co.apexsoft.stella.cmm.CMMParameter;
 import kr.co.apexsoft.stella.cmm.CMMPrimitiveType;
 import kr.co.apexsoft.stella.cmm.CMMType;
@@ -37,7 +38,9 @@ import org.eclipse.uml2.uml.Interface;
 import org.eclipse.uml2.uml.Lifeline;
 import org.eclipse.uml2.uml.Message;
 import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
+import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Namespace;
 import org.eclipse.uml2.uml.OccurrenceSpecification;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Package;
@@ -78,6 +81,9 @@ public class CMMTransformer {
 	private void transformPackage(Package _package) {
 		List<NamedElement> members = _package.getOwnedMembers();
 		for (NamedElement member : members) {
+			if (member instanceof Package) {
+				transformPackage((Package) member);
+			}
 			if (member instanceof Class) {
 				transformClass((Class) member);
 			}
@@ -92,7 +98,7 @@ public class CMMTransformer {
 	
 	private void transformClassifier(Classifier _classifier) {
 		if (_classifier instanceof Interface) {
-			cachedElements.add(makeCMMClass(_classifier));
+			cachedElements.add(createCMMClass(_classifier));
 		} else if (_classifier instanceof Collaboration) {
 			transformCollaboration((Collaboration) _classifier);
 		} else if (_classifier instanceof Class) {
@@ -111,7 +117,7 @@ public class CMMTransformer {
 		if (_class instanceof Behavior) {
 			transformBehavior((Behavior) _class);
 		} else {
-			cachedElements.add(makeCMMClass(_class));
+			cachedElements.add(createCMMClass(_class));
 		}
 	}
 	
@@ -180,7 +186,7 @@ public class CMMTransformer {
 		return cmmEnum;
 	}
 	
-	private CMMClass makeCMMClass(Classifier _classifier) {
+	private CMMClass createCMMClass(Classifier _classifier) {
 		CMMClass cmmClass = new CMMClass();
 		
 		cmmClass.setName(_classifier.getName());
@@ -192,29 +198,37 @@ public class CMMTransformer {
 		
 		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_classifier.getVisibility());
 		cmmClass.setVisibilityKind(visibilityKind);
+		
+		CMMNamespace namespace = createCMMNamespace(_classifier.getNamespace());
+		cmmClass.setNamespace(namespace);
 
 		List<Property> attributes = _classifier.getAllAttributes();
 		for (Property attr : attributes) {
-			CMMAttribute cmmAttr = makeCMMAttribute(attr);
+			CMMAttribute cmmAttr = createCMMAttribute(attr);
 			cmmClass.getAttributes().add(cmmAttr);
 		}
 		
 		List<Operation> operations = _classifier.getAllOperations();
 		for (Operation op : operations) {
-			CMMOperation cmmOp = makeCMMOperation(op);
+			CMMOperation cmmOp = createCMMOperation(op);
 			cmmClass.getOperations().add(cmmOp);
 		}
 		
 		return cmmClass;
 	}
 	
-	private CMMAttribute makeCMMAttribute(Property _attribute) {
+	private CMMNamespace createCMMNamespace(Namespace _namespace) {
+		String uri = getFullPath(_namespace);
+		return new CMMNamespace(uri, _namespace.separator());
+	}
+	
+	private CMMAttribute createCMMAttribute(Property _attribute) {
 		CMMAttribute cmmAttr = new CMMAttribute();
 		
 		cmmAttr.setName(_attribute.getName());
 		cmmAttr.setDescription(""); // TODO
 		
-		cmmAttr.setType(makeCMMType(_attribute.getType()));
+		cmmAttr.setType(getCMMType(_attribute.getType()));
 		
 		cmmAttr.setFinal(_attribute.isLeaf());
 		cmmAttr.setStatic(_attribute.isStatic());
@@ -225,14 +239,16 @@ public class CMMTransformer {
 		return cmmAttr;
 	}
 	
-	private CMMOperation makeCMMOperation(Operation _operation) {
+	private CMMOperation createCMMOperation(Operation _operation) {
 		CMMOperation cmmOp = new CMMOperation();
 		
 		cmmOp.setName(_operation.getName());
 		cmmOp.setDescription(""); // TODO
 		
 		Parameter returnResult = _operation.getReturnResult();
-		cmmOp.setReturnValue(makeCMMType(returnResult.getType()));
+		if (returnResult != null) {
+			cmmOp.setReturnValue(getCMMType(returnResult.getType()));
+		}
 		
 		cmmOp.setAbstract(_operation.isAbstract());
 		cmmOp.setFinal(_operation.isLeaf());
@@ -243,39 +259,47 @@ public class CMMTransformer {
 		
 		List<Parameter> parameters = _operation.getOwnedParameters();
 		for (Parameter param : parameters) {
-			CMMParameter cmmParam = makeCMMParameter(param);
+			CMMParameter cmmParam = createCMMParameter(param);
 			cmmOp.getParameters().add(cmmParam);
 		}
 		
 		return cmmOp;
 	}
 	
-	private CMMParameter makeCMMParameter(Parameter _parameter) {
+	private CMMParameter createCMMParameter(Parameter _parameter) {
 		CMMParameter cmmParam = new CMMParameter();
 		
 		cmmParam.setName(_parameter.getName());
 		cmmParam.setDescription(""); // TODO
 		
-		cmmParam.setType(makeCMMType(_parameter.getType()));
+		cmmParam.setType(getCMMType(_parameter.getType()));
 		
 		return cmmParam;
 	}
 	
-	private CMMType makeCMMType(Type _type) {
+	private CMMType createCMMType(Type _type) {
 		CMMType cmmType = null;
 		
 		if (_type instanceof PrimitiveType) {
-			cmmType = getCMMPrimitiveType((PrimitiveType) _type);
+			cmmType = createCMMPrimitiveType((PrimitiveType) _type);
 		} else if (_type instanceof Enumeration) {
-			cmmType = makeCMMEnum((Enumeration) _type);
+			cmmType = createCMMEnum((Enumeration) _type);
 		} else if (_type instanceof Class) {
-			cmmType = makeCMMClass((Class) _type);
+			cmmType = createCMMClass((Class) _type);
 		}
 		
 		return cmmType;
 	}
 	
-	private CMMEnum makeCMMEnum(Enumeration _enum) {
+	private CMMType getCMMType(Type _type) {
+		CMMType cmmType = findCMMType(_type);
+		if (cmmType == null) {
+			cmmType = createCMMType(_type);
+		}
+		return cmmType;
+	}
+	
+	private CMMEnum createCMMEnum(Enumeration _enum) {
 		CMMEnum cmmEnum = new CMMEnum();
 		
 		cmmEnum.setName(_enum.getName());
@@ -287,13 +311,13 @@ public class CMMTransformer {
 		cmmEnum.setVisibilityKind(visibilityKind);
 		
 		for (EnumerationLiteral literal : _enum.getOwnedLiterals()) {
-			cmmEnum.getEnumElements().add(makeCMMEnumElement(literal));
+			cmmEnum.getEnumElements().add(createCMMEnumElement(literal));
 		}
 		
 		return cmmEnum;
 	}
 	
-	private CMMEnumElement makeCMMEnumElement(EnumerationLiteral _literal) {
+	private CMMEnumElement createCMMEnumElement(EnumerationLiteral _literal) {
 		CMMEnumElement enumElement = new CMMEnumElement();
 		
 		enumElement.setName(_literal.getName());
@@ -317,31 +341,38 @@ public class CMMTransformer {
 		}
 	}
 	
-	private CMMPrimitiveType getCMMPrimitiveType(PrimitiveType primitiveType) {
-		for (CMMPrimitiveType type : CMMPrimitiveType.values()) {
-			if (type.getName().equalsIgnoreCase(primitiveType.getName())) {
-				return type;
+	private CMMPrimitiveType createCMMPrimitiveType(PrimitiveType primitiveType) {
+		return new CMMPrimitiveType(primitiveType.getName());
+	}
+	
+	private CMMType findCMMType(Type _type) {
+		String fullPath = getFullPath(_type);
+		fullPath = fullPath.replaceAll(_type.separator(), CMMNamespace.SEPERATOR);
+		
+		for (CMMElement cmmElement : cachedElements) {
+			if (cmmElement instanceof CMMPackageableElement) {
+				String fp = ((CMMPackageableElement) cmmElement).getFullPath();
+				if (fullPath.equals(fp)) {
+					return (CMMPackageableElement) cmmElement;
+				}
 			}
 		}
+		
 		return null;
 	}
 	
-//	private CMMClass getCMMClass(Class _class) {
-//		String fullPath = _class.getName();
-//		
-//		if (_class.getPackage() != null) {
-//			fullPath = _class.getPackage().getURI() + "." + fullPath;
-//		}
-//		
-//		for (CMMElement cmmElement : cachedElements) {
-//			if (cmmElement instanceof CMMPackagableElement) {
-//				String fp = ((CMMPackagableElement) cmmElement).getFullPath();
-//				if (fullPath.equals(fp)) {
-//					return cmmElement;
-//				}
-//			}
-//		}
-//		
-//		return null;
-//	}
+	private String getFullPath(NamedElement _namedElement) {
+		StringBuffer sb = new StringBuffer(_namedElement.getName());
+		
+		for (Namespace namespace : _namedElement.allNamespaces()) {
+			if (namespace instanceof Model) {
+				break;
+			}
+			sb.insert(0, namespace.separator());
+			sb.insert(0, namespace.getName());
+		}
+		
+		return sb.toString();
+	}
+	
 }

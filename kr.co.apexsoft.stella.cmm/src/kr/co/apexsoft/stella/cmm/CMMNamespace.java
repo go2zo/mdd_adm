@@ -5,26 +5,41 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CMMNamespace implements CMMElement {
+	
+	public final static String SEPERATOR = ".";
+	
 	private String URI;
 	private String[] segments;
-	private List<CMMClass> memberClasses;
 
-	public CMMNamespace(String[] segments) {
+	public CMMNamespace() {
+		
+	}
+	
+	public CMMNamespace(final String[] segments) {
 		this.segments = Arrays.copyOf(segments, segments.length);
 		
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < segments.length; i++) {
 			sb.append(segments[i]);
 			if (i > 0) {
-				sb.append(".");
+				sb.append(SEPERATOR);
 			}
 		}
 		this.URI = sb.toString();
 	}
 	
-	public CMMNamespace(String uri) {
-		this.URI = uri;
-		this.segments = uri.split(".");
+	public CMMNamespace(final String uri) {
+		this(uri, null);
+	}
+	
+	public CMMNamespace(final String uri, final String seperator) {
+		if (SEPERATOR.equals(seperator)) {
+			this.URI = uri;
+			this.segments = uri.split(SEPERATOR);
+		} else {
+			this.URI = uri.replaceAll(seperator, SEPERATOR);
+			this.segments = uri.split(seperator);
+		}
 	}
 	
 	public String getURI() {
@@ -39,10 +54,8 @@ public class CMMNamespace implements CMMElement {
 		return segments;
 	}
 	
-	public List<CMMClass> getClasses() {
-		if (memberClasses == null) {
-			memberClasses = new ArrayList<CMMClass>();
-		}
-		return memberClasses;
+	public String seperator() {
+		return SEPERATOR;
 	}
+	
 }

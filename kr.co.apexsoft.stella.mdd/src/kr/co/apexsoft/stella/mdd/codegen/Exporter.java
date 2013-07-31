@@ -4,13 +4,10 @@ import java.util.List;
 
 import kr.co.apexsoft.stella.cmm.CMMElement;
 
-public class Exporter {
+public interface Exporter {
 
-	public void exportToFile(CMMElement element) {
-		
-	}
+	public void export(CMMElement element);
 	
-	public void exportToFile(List<CMMElement> elements) {
-		
-	}
+	public void export(List<CMMElement> elements);
+	
 }

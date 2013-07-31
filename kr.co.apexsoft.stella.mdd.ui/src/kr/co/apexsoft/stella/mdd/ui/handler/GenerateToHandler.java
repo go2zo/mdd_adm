@@ -4,6 +4,7 @@ import java.util.List;
 
 import kr.co.apexsoft.stella.cmm.CMMElement;
 import kr.co.apexsoft.stella.mdd.codegen.CMMTransformer;
+import kr.co.apexsoft.stella.mdd.codegen.CodeGenerator;
 import kr.co.apexsoft.stella.modeler.ui.UMLModeler;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -17,8 +18,11 @@ public class GenerateToHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<EObject> selectedElements = UMLModeler.getUMLUIHelper().getSelectedElements();
 		
-		CMMTransformer transformer = new CMMTransformer();
-		List<CMMElement> list = transformer.transforms(selectedElements);
+//		CMMTransformer transformer = new CMMTransformer();
+//		List<CMMElement> list = transformer.transforms(selectedElements);
+
+		CodeGenerator generator = new CodeGenerator(selectedElements);
+		generator.generate();
 		
 		return null;
 	}

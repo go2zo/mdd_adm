@@ -7,7 +7,8 @@
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu?after=help">
          <menu
-               label="MDD">
+               id="kr.co.apexsoft.stella.mdd.ui.menu"
+               label="&amp;MDD">
             <command
                   commandId="kr.co.apexsoft.stella.mdd.ui.generateTo"
                   style="push">

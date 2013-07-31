@@ -47,8 +47,8 @@ public class CodeGenerator {
 		CMMTransformer transformer = new CMMTransformer();
 		List<CMMElement> cmmElements = transformer.transforms(elements);
 
-		Exporter exporter = new Exporter();
-		exporter.exportToFile(cmmElements);
+		Exporter exporter = new JavaExporter();
+		exporter.export(cmmElements);
 		
 	}
 }

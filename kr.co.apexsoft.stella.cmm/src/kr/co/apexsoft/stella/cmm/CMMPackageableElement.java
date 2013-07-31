@@ -3,11 +3,11 @@ package kr.co.apexsoft.stella.cmm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CMMPackagableElement extends CMMFinalElement implements CMMType {
+public class CMMPackageableElement extends CMMFinalElement implements CMMType {
 
 	private CMMNamespace namespace;
 	
-	private List<CMMPackagableElement> importElements;
+	private List<CMMPackageableElement> importElements;
 	private List<CMMClass> inheritances;
 	
 	public CMMNamespace getNamespace() {
@@ -18,14 +18,14 @@ public class CMMPackagableElement extends CMMFinalElement implements CMMType {
 		this.namespace = namespace;
 	}
 	
-	public List<CMMPackagableElement> getImportElements() {
+	public List<CMMPackageableElement> getImportElements() {
 		if (importElements == null) {
 			importElements = new ArrayList<>();
 		}
 		return importElements;
 	}
 	
-	public void setImportElements(List<CMMPackagableElement> importElements) {
+	public void setImportElements(List<CMMPackageableElement> importElements) {
 		getImportElements().clear();
 		getImportElements().addAll(importElements);
 	}

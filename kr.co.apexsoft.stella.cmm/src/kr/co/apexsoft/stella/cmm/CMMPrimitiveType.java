@@ -1,11 +1,20 @@
 package kr.co.apexsoft.stella.cmm;
 
-public enum CMMPrimitiveType implements CMMType {
-	VOID, INT, CHAR, BOOLEAN;
+public class CMMPrimitiveType implements CMMType {
 
+	private String name;
+	
+	public CMMPrimitiveType(final String name) {
+		this.name = name;
+	}
+	
 	@Override
 	public String getName() {
-		return name();
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

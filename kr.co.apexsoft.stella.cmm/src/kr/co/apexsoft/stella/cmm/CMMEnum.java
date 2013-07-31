@@ -3,7 +3,7 @@ package kr.co.apexsoft.stella.cmm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CMMEnum extends CMMPackagableElement {
+public class CMMEnum extends CMMPackageableElement {
 
 	private List<CMMEnumElement> enumElements;
 	
