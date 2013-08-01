@@ -19,9 +19,8 @@ public class CMMClass extends CMMPackageableElement implements CMMAbstractableEl
 		return ownerAttributes;
 	}
 	
-	public void setAttributes(List<CMMAttribute> attributes) {
-		getAttributes().clear();
-		getAttributes().addAll(attributes);
+	public boolean addAttribute(CMMAttribute attribute) {
+		return getAttributes().add(attribute);
 	}
 	
 	public List<CMMOperation> getOperations() {
@@ -30,10 +29,9 @@ public class CMMClass extends CMMPackageableElement implements CMMAbstractableEl
 		}
 		return ownerOperations;
 	}
-	
-	public void setOperations(List<CMMOperation> operations) {
-		getOperations().clear();
-		getOperations().addAll(operations);
+
+	public boolean addOperation(CMMOperation operation) {
+		return getOperations().add(operation);
 	}
 	
 	public List<CMMClass> getNestedClasses() {
@@ -43,9 +41,8 @@ public class CMMClass extends CMMPackageableElement implements CMMAbstractableEl
 		return nestedClasses;
 	}
 
-	public void setNestedClasses(List<CMMClass> nestedClasses) {
-		getNestedClasses().clear();
-		getNestedClasses().addAll(nestedClasses);
+	public boolean addNestedClass(CMMClass nestedClass) {
+		return getNestedClasses().add(nestedClass);
 	}
 	
 	public boolean isInterface() {

@@ -14,9 +14,8 @@ public class CMMEnum extends CMMPackageableElement {
 		return enumElements;
 	}
 	
-	public void setEnumElements(List<CMMEnumElement> enumElements) {
-		getEnumElements().clear();
-		getEnumElements().addAll(enumElements);
+	public boolean addEnumElement(CMMEnumElement enumElement) {
+		return getEnumElements().add(enumElement);
 	}
 	
 }

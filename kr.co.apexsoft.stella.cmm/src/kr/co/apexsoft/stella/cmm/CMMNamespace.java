@@ -1,8 +1,6 @@
 package kr.co.apexsoft.stella.cmm;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class CMMNamespace implements CMMElement {
 	

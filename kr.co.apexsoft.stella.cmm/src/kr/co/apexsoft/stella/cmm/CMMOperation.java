@@ -8,7 +8,7 @@ public class CMMOperation extends CMMRedefinedElement
 
 	private List<CMMParameter> ownedParameters;
 	
-	private List<CMMStatement> statements;
+	private List<CMMStatement> ownedStatements;
 	
 	private boolean isAbstract;
 	
@@ -19,21 +19,19 @@ public class CMMOperation extends CMMRedefinedElement
 		return ownedParameters;
 	}
 	
-	public void setParameters(List<CMMParameter> parapeters) {
-		getParameters().clear();
-		getParameters().addAll(parapeters);
+	public boolean addParameter(CMMParameter parameter) {
+		return getParameters().add(parameter);
 	}
 	
 	public List<CMMStatement> getStatements() {
-		if (statements == null) {
-			statements = new ArrayList<>();
+		if (ownedStatements == null) {
+			ownedStatements = new ArrayList<>();
 		}
-		return statements;
+		return ownedStatements;
 	}
 	
-	public void setStatements(List<CMMStatement> statements) {
-		getStatements().clear();
-		getStatements().addAll(statements);
+	public boolean addStatement(CMMStatement statement) {
+		return getStatements().add(statement);
 	}
 	
 	public CMMType getReturnValue() {
@@ -53,4 +51,5 @@ public class CMMOperation extends CMMRedefinedElement
 	public void setAbstract(boolean isAbstract) {
 		this.isAbstract = isAbstract;
 	}
+	
 }

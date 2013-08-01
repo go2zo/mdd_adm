@@ -8,9 +8,13 @@ import java.util.Set;
 
 import kr.co.apexsoft.stella.cmm.CMMAttribute;
 import kr.co.apexsoft.stella.cmm.CMMClass;
+import kr.co.apexsoft.stella.cmm.CMMContainerStatement;
 import kr.co.apexsoft.stella.cmm.CMMElement;
 import kr.co.apexsoft.stella.cmm.CMMEnum;
 import kr.co.apexsoft.stella.cmm.CMMEnumElement;
+import kr.co.apexsoft.stella.cmm.CMMIfStatement;
+import kr.co.apexsoft.stella.cmm.CMMLoopStatement;
+import kr.co.apexsoft.stella.cmm.CMMNamedElement;
 import kr.co.apexsoft.stella.cmm.CMMNamespace;
 import kr.co.apexsoft.stella.cmm.CMMOperation;
 import kr.co.apexsoft.stella.cmm.CMMPackageableElement;
@@ -18,6 +22,7 @@ import kr.co.apexsoft.stella.cmm.CMMParameter;
 import kr.co.apexsoft.stella.cmm.CMMPrimitiveType;
 import kr.co.apexsoft.stella.cmm.CMMType;
 import kr.co.apexsoft.stella.cmm.CMMVisibilityKind;
+import kr.co.apexsoft.stella.mdd.util.CMMUtil;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Behavior;
@@ -28,8 +33,9 @@ import org.eclipse.uml2.uml.CombinedFragment;
 import org.eclipse.uml2.uml.ConnectableElement;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.EnumerationLiteral;
-import org.eclipse.uml2.uml.ExecutionSpecification;
+import org.eclipse.uml2.uml.ExecutionOccurrenceSpecification;
 import org.eclipse.uml2.uml.Interaction;
+import org.eclipse.uml2.uml.InteractionConstraint;
 import org.eclipse.uml2.uml.InteractionFragment;
 import org.eclipse.uml2.uml.InteractionOperand;
 import org.eclipse.uml2.uml.InteractionOperatorKind;
@@ -38,15 +44,14 @@ import org.eclipse.uml2.uml.Interface;
 import org.eclipse.uml2.uml.Lifeline;
 import org.eclipse.uml2.uml.Message;
 import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
-import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Namespace;
-import org.eclipse.uml2.uml.OccurrenceSpecification;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.StringExpression;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.VisibilityKind;
 
@@ -128,11 +133,32 @@ public class CMMTransformer {
 	}
 	
 	private void transformInteraction(Interaction _interaction) {
-		List<Lifeline> lifelines = _interaction.getLifelines();
-		
-		for (Lifeline lifeline : lifelines) {
+		for (Lifeline lifeline : _interaction.getLifelines()) {
 			transformLifeline(lifeline);
 		}
+		
+		_interaction.getMessages();
+		
+		for (InteractionFragment fragment : _interaction.getFragments()) {
+			transformInteractionFragment(fragment);
+		}
+	}
+	
+	private CMMNamedElement getCalledElement(Message _message) {
+		NamedElement signature = _message.getSignature();
+		
+		MessageOccurrenceSpecification mos = (MessageOccurrenceSpecification)_message.getReceiveEvent();
+		Lifeline lifeline = mos.getCovereds().get(0);
+		if (lifeline != null) {
+			Type type = getLifelineType(lifeline);
+			CMMType cmmType = getCMMType(type);
+			
+			if (cmmType instanceof CMMClass) {
+				
+			}
+		}
+		
+		return null;
 	}
 	
 	private void transformLifeline(Lifeline _lifeline) {
@@ -148,33 +174,71 @@ public class CMMTransformer {
 		return null;
 	}
 	
-	private void transformFragment(InteractionFragment _fragment, List<CMMElement> result) {
+	private void transformInteractionFragment(InteractionFragment _fragment) {
 		if (_fragment instanceof CombinedFragment) {
-			CombinedFragment cf = (CombinedFragment)_fragment;
-			InteractionOperatorKind kind = cf.getInteractionOperator();
-			
-		} else if (_fragment instanceof ExecutionSpecification) {
-			
-		} else if (_fragment instanceof OccurrenceSpecification) {
-			if (_fragment instanceof MessageOccurrenceSpecification) {
-				MessageOccurrenceSpecification mos = (MessageOccurrenceSpecification)_fragment;
-				Message message = mos.getMessage();
-
-			}
+			transformCombinedFragment((CombinedFragment) _fragment);
+		} else if (_fragment instanceof MessageOccurrenceSpecification) {
+			MessageOccurrenceSpecification mos = (MessageOccurrenceSpecification) _fragment;
+			Message message = mos.getMessage();
+		} else if (_fragment instanceof ExecutionOccurrenceSpecification) {
+			// XXX
 		} else if (_fragment instanceof InteractionOperand) {
-			
+			transformInteractionOperand((InteractionOperand) _fragment);
 		} else if (_fragment instanceof InteractionUse) {
-			
+			// XXX
 		}
 	}
 	
-	private void transformCFragment(CombinedFragment cFragment) {
-		InteractionOperatorKind ioKind = cFragment.getInteractionOperator();
+	private void transformInteractionOperand(InteractionOperand _operand) {
+		for (InteractionFragment fragment : _operand.getFragments()) {
+			transformInteractionFragment(fragment);
+		}
+	}
+	
+	private	CMMContainerStatement transformOperand(InteractionOperand _operand,
+			InteractionOperatorKind kind) {
+		CMMContainerStatement statement = null;
+		
+		if (InteractionOperatorKind.ALT_LITERAL.equals(kind)) {
+			statement = new CMMIfStatement();
+		} else if (InteractionOperatorKind.LOOP_LITERAL.equals(kind)) {
+			statement = new CMMLoopStatement();
+		}
+		
+		InteractionConstraint guard = _operand.getGuard();
+		StringExpression expression = guard.getNameExpression();
+		String value = expression.stringValue();
+		
+		return statement;
+	}
+	
+	private void transformCombinedFragment(CombinedFragment _cFragment) {
+		InteractionOperatorKind ioKind = _cFragment.getInteractionOperator();
 
 		if (InteractionOperatorKind.ALT_LITERAL.equals(ioKind)) {
-			
+			CMMIfStatement ifStatement = null;
+			CMMIfStatement tmpStatement = null;
+			for (InteractionOperand operand : _cFragment.getOperands()) {
+				CMMContainerStatement statement = transformOperand(operand, ioKind);
+				if (statement instanceof CMMIfStatement) {
+					if (tmpStatement == null) {
+						ifStatement = (CMMIfStatement) statement;
+						tmpStatement = ifStatement;
+					} else {
+						tmpStatement = tmpStatement.append((CMMIfStatement) statement);
+					}
+				}
+			}
 		} else if (InteractionOperatorKind.LOOP_LITERAL.equals(ioKind)) {
-			
+			CMMContainerStatement loopStatement = transformOperand(
+					_cFragment.getOperands().get(0), ioKind);
+			if (loopStatement instanceof CMMLoopStatement) {
+				
+			}
+		}
+		
+		for (InteractionOperand operand : _cFragment.getOperands()) {
+			transformInteractionFragment(operand);
 		}
 	}
 	
@@ -187,28 +251,67 @@ public class CMMTransformer {
 	}
 	
 	private CMMClass createCMMClass(Classifier _classifier) {
+		if (_classifier instanceof Class) {
+			return createCMMClass((Class) _classifier);
+		} else if (_classifier instanceof Interface) {
+			return createCMMClass((Interface) _classifier);
+		}
+		return null;
+	}
+	
+	private CMMClass createCMMClass(Class _class) {
 		CMMClass cmmClass = new CMMClass();
 		
-		cmmClass.setName(_classifier.getName());
+		cmmClass.setName(_class.getName());
 		cmmClass.setDescription(""); // TODO
 		
-		cmmClass.setAbstract(_classifier.isAbstract());
-		cmmClass.setFinal(_classifier.isLeaf());
-		cmmClass.setInterface(_classifier instanceof Interface);
+		cmmClass.setAbstract(_class.isAbstract());
+		cmmClass.setFinal(_class.isLeaf());
 		
-		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_classifier.getVisibility());
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_class.getVisibility());
 		cmmClass.setVisibilityKind(visibilityKind);
 		
-		CMMNamespace namespace = createCMMNamespace(_classifier.getNamespace());
+		CMMNamespace namespace = createCMMNamespace(_class.getNamespace());
 		cmmClass.setNamespace(namespace);
 
-		List<Property> attributes = _classifier.getAllAttributes();
+		List<Property> attributes = _class.getOwnedAttributes();
 		for (Property attr : attributes) {
 			CMMAttribute cmmAttr = createCMMAttribute(attr);
 			cmmClass.getAttributes().add(cmmAttr);
 		}
 		
-		List<Operation> operations = _classifier.getAllOperations();
+		List<Operation> operations = _class.getAllOperations();
+		for (Operation op : operations) {
+			CMMOperation cmmOp = createCMMOperation(op);
+			cmmClass.getOperations().add(cmmOp);
+		}
+		
+		return cmmClass;
+	}
+	
+	private CMMClass createCMMClass(Interface _interface) {
+		CMMClass cmmClass = new CMMClass();
+		
+		cmmClass.setName(_interface.getName());
+		cmmClass.setDescription(""); // TODO
+		
+		cmmClass.setAbstract(_interface.isAbstract());
+		cmmClass.setFinal(_interface.isLeaf());
+		cmmClass.setInterface(_interface instanceof Interface);
+		
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_interface.getVisibility());
+		cmmClass.setVisibilityKind(visibilityKind);
+		
+		CMMNamespace namespace = createCMMNamespace(_interface.getNamespace());
+		cmmClass.setNamespace(namespace);
+
+		List<Property> attributes = _interface.getOwnedAttributes();
+		for (Property attr : attributes) {
+			CMMAttribute cmmAttr = createCMMAttribute(attr);
+			cmmClass.getAttributes().add(cmmAttr);
+		}
+		
+		List<Operation> operations = _interface.getAllOperations();
 		for (Operation op : operations) {
 			CMMOperation cmmOp = createCMMOperation(op);
 			cmmClass.getOperations().add(cmmOp);
@@ -218,7 +321,7 @@ public class CMMTransformer {
 	}
 	
 	private CMMNamespace createCMMNamespace(Namespace _namespace) {
-		String uri = getFullPath(_namespace);
+		String uri = CMMUtil.getFullPath(_namespace);
 		return new CMMNamespace(uri, _namespace.separator());
 	}
 	
@@ -346,7 +449,7 @@ public class CMMTransformer {
 	}
 	
 	private CMMType findCMMType(Type _type) {
-		String fullPath = getFullPath(_type);
+		String fullPath = CMMUtil.getFullPath(_type);
 		fullPath = fullPath.replaceAll(_type.separator(), CMMNamespace.SEPERATOR);
 		
 		for (CMMElement cmmElement : cachedElements) {
@@ -361,18 +464,5 @@ public class CMMTransformer {
 		return null;
 	}
 	
-	private String getFullPath(NamedElement _namedElement) {
-		StringBuffer sb = new StringBuffer(_namedElement.getName());
-		
-		for (Namespace namespace : _namedElement.allNamespaces()) {
-			if (namespace instanceof Model) {
-				break;
-			}
-			sb.insert(0, namespace.separator());
-			sb.insert(0, namespace.getName());
-		}
-		
-		return sb.toString();
-	}
-	
+
 }

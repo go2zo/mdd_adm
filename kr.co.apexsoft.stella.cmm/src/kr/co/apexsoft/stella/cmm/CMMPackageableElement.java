@@ -25,9 +25,8 @@ public class CMMPackageableElement extends CMMFinalElement implements CMMType {
 		return importElements;
 	}
 	
-	public void setImportElements(List<CMMPackageableElement> importElements) {
-		getImportElements().clear();
-		getImportElements().addAll(importElements);
+	public boolean addImportElements(CMMPackageableElement importElement) {
+		return getImportElements().add(importElement);
 	}
 	
 	public List<CMMClass> getInheritances() {
@@ -37,11 +36,10 @@ public class CMMPackageableElement extends CMMFinalElement implements CMMType {
 		return inheritances;
 	}
 	
-	public void setInheritances(List<CMMClass> inheritances) {
-		getInheritances().clear();
-		getInheritances().addAll(inheritances);
+	public boolean addInheritance(CMMClass inheritance) {
+		return getInheritances().add(inheritance);
 	}
-
+	
 	public String getFullPath() {
 		StringBuffer sb = new StringBuffer();
 		if (namespace != null) {
