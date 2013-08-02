@@ -6,14 +6,6 @@ public abstract class CMMAbstractElement implements CMMNamedElement {
 	private String description;
 	private CMMVisibilityKind visibilityKind;
 
-	public CMMAbstractElement() {
-		
-	}
-	
-	public CMMAbstractElement(String name) {
-		this.name = name;
-	}
-	
 	public String getName() {
 		return name;
 	}

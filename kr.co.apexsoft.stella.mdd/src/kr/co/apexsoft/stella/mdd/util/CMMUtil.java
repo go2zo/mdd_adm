@@ -99,7 +99,7 @@ public class CMMUtil {
 	}
 
 	private static boolean isEqualEnum(final CMMEnum cmm, final Enumeration element) {
-		if (cmm.getFullPath().equals(getFullPath(element))) {
+		if (cmm.getQualifiedName().equals(getFullPath(element))) {
 			return true;
 		}
 		return false;
@@ -153,7 +153,7 @@ public class CMMUtil {
 	}
 
 	private static boolean isEqualClass(final CMMClass cmm, final Class element) {
-		if (cmm.getFullPath().equals(getFullPath(element))) {
+		if (cmm.getQualifiedName().equals(getFullPath(element))) {
 			return true;
 		}
 		return false;

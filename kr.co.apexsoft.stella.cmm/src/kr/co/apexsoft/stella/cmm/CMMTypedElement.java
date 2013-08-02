@@ -1,6 +1,6 @@
 package kr.co.apexsoft.stella.cmm;
 
-public class CMMTypedElement extends CMMFinalElement {
+public abstract class CMMTypedElement extends CMMFinalElement {
 	
 	private CMMType type;
 

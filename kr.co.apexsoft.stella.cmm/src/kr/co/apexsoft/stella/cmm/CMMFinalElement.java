@@ -1,6 +1,6 @@
 package kr.co.apexsoft.stella.cmm;
 
-public class CMMFinalElement extends CMMAbstractElement {
+public abstract class CMMFinalElement extends CMMAbstractElement {
 
 	private boolean isFinal;
 	

@@ -1,6 +1,7 @@
 package kr.co.apexsoft.stella.mdd.codegen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -64,20 +65,20 @@ public class CMMTransformer {
 	}
 	
 	public List<CMMElement> transform(EObject element) {
-		if (element instanceof Package) {
-			transformPackage((Package) element);
-		} else if (element instanceof Type) {
-			transformType((Type) element);
-		}
+		transform(Arrays.asList(element));
 		
 		return new ArrayList<>(cachedElements);
 	}
 	
-	public List<CMMElement> transforms(List<EObject> elements) {
+	public List<CMMElement> transform(List<EObject> elements) {
 		Iterator<EObject> iterator = elements.iterator();
 		while (iterator.hasNext()) {
 			EObject element = iterator.next();
-			transform(element);
+			if (element instanceof Package) {
+				transformPackage((Package) element);
+			} else if (element instanceof Type) {
+				transformType((Type) element);
+			}
 		}
 		
 		return new ArrayList<>(cachedElements);
@@ -454,7 +455,7 @@ public class CMMTransformer {
 		
 		for (CMMElement cmmElement : cachedElements) {
 			if (cmmElement instanceof CMMPackageableElement) {
-				String fp = ((CMMPackageableElement) cmmElement).getFullPath();
+				String fp = ((CMMPackageableElement) cmmElement).getQualifiedName();
 				if (fullPath.equals(fp)) {
 					return (CMMPackageableElement) cmmElement;
 				}

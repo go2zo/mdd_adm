@@ -3,7 +3,7 @@ package kr.co.apexsoft.stella.cmm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CMMPackageableElement extends CMMFinalElement implements CMMType {
+public abstract class CMMPackageableElement extends CMMFinalElement implements CMMType {
 
 	private CMMNamespace namespace;
 	
@@ -40,7 +40,7 @@ public class CMMPackageableElement extends CMMFinalElement implements CMMType {
 		return getInheritances().add(inheritance);
 	}
 	
-	public String getFullPath() {
+	public String getQualifiedName() {
 		StringBuffer sb = new StringBuffer();
 		if (namespace != null) {
 			sb.append(namespace.getURI());
