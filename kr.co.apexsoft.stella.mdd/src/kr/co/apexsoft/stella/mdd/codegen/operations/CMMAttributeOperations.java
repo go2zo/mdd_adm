@@ -11,18 +11,18 @@ public class CMMAttributeOperations extends CMMTypedElementOperations {
 		
 	}
 	
-	public static CMMAttribute createCMMAttribute(final Property _attribute) {
+	public static CMMAttribute createCMMAttribute(final Property element) {
 		CMMAttribute cmmAttr = new CMMAttribute();
 		
-		cmmAttr.setName(_attribute.getName());
+		cmmAttr.setName(element.getName());
 		cmmAttr.setDescription(""); // TODO
 		
-		cmmAttr.setType(createCMMType(_attribute.getType()));
+		cmmAttr.setType(createCMMType(element.getType()));
 		
-		cmmAttr.setFinal(_attribute.isLeaf());
-		cmmAttr.setStatic(_attribute.isStatic());
+		cmmAttr.setFinal(element.isLeaf());
+		cmmAttr.setStatic(element.isStatic());
 		
-		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_attribute.getVisibility());
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(element.getVisibility());
 		cmmAttr.setVisibilityKind(visibilityKind);
 		
 		return cmmAttr;

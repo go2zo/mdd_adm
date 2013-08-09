@@ -7,7 +7,7 @@ import kr.co.apexsoft.stella.cmm.CMMAttribute;
 import kr.co.apexsoft.stella.cmm.CMMClass;
 import kr.co.apexsoft.stella.cmm.CMMElement;
 import kr.co.apexsoft.stella.cmm.CMMEnum;
-import kr.co.apexsoft.stella.cmm.CMMEnumElement;
+import kr.co.apexsoft.stella.cmm.CMMEnumLiteral;
 import kr.co.apexsoft.stella.cmm.CMMNamedElement;
 import kr.co.apexsoft.stella.cmm.CMMOperation;
 import kr.co.apexsoft.stella.cmm.CMMParameter;
@@ -62,8 +62,8 @@ public class CMMUtil {
 		return null;
 	}
 	
-	public static CMMEnumElement findCMMEnumElement(final CMMEnum cmmEnum, final EnumerationLiteral literal) {
-		for (CMMEnumElement cmmEnumElement : cmmEnum.getEnumElements()) {
+	public static CMMEnumLiteral findCMMEnumElement(final CMMEnum cmmEnum, final EnumerationLiteral literal) {
+		for (CMMEnumLiteral cmmEnumElement : cmmEnum.getEnumElements()) {
 			if (isEqual(cmmEnumElement, literal)) {
 				return cmmEnumElement;
 			}
@@ -86,14 +86,14 @@ public class CMMUtil {
 			return isEqualParameter((CMMParameter) cmm, (Parameter) element);
 		} else if (cmm instanceof CMMEnum && element instanceof Enumeration) {
 			return isEqualEnum((CMMEnum) cmm, (Enumeration) element);
-		} else if (cmm instanceof CMMEnumElement && element instanceof EnumerationLiteral) {
-			return isEqualEnumElement((CMMEnumElement) cmm, (EnumerationLiteral) element);
+		} else if (cmm instanceof CMMEnumLiteral && element instanceof EnumerationLiteral) {
+			return isEqualEnumElement((CMMEnumLiteral) cmm, (EnumerationLiteral) element);
 		}
 		
 		return false;
 	}
 	
-	private static boolean isEqualEnumElement(final CMMEnumElement cmm,
+	private static boolean isEqualEnumElement(final CMMEnumLiteral cmm,
 			final EnumerationLiteral element) {
 		return true;
 	}

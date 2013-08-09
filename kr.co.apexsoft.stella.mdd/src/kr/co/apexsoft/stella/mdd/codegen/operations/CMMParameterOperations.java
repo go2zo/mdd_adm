@@ -10,8 +10,14 @@ public class CMMParameterOperations extends CMMTypedElementOperations {
 		
 	}
 	
-	public static CMMParameter createCMMParameter(Parameter parameter) {
-		// TODO
-		return null;
+	public static CMMParameter createCMMParameter(final Parameter element) {
+		CMMParameter cmmParam = new CMMParameter();
+		
+		cmmParam.setName(element.getName());
+		cmmParam.setDescription(getDescription(element));
+
+		cmmParam.setType(createCMMType(element.getType()));
+		
+		return cmmParam;
 	}
 }

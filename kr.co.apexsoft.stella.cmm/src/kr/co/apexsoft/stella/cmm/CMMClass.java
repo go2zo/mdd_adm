@@ -10,7 +10,6 @@ public class CMMClass extends CMMPackageableElement implements CMMAbstractableEl
 	private List<CMMClass> nestedClasses;
 	
 	private boolean isInterface;
-	private boolean isAbstract;
 	
 	public List<CMMAttribute> getAttributes() {
 		if (ownerAttributes == null) {
@@ -51,16 +50,6 @@ public class CMMClass extends CMMPackageableElement implements CMMAbstractableEl
 
 	public void setInterface(boolean isInterface) {
 		this.isInterface = isInterface;
-	}
-
-	@Override
-	public boolean isAbstract() {
-		return isAbstract;
-	}
-
-	@Override
-	public void setAbstract(boolean isAbstract) {
-		this.isAbstract = isAbstract;
 	}
 
 }

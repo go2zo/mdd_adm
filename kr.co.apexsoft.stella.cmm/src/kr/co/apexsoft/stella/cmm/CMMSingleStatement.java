@@ -11,5 +11,10 @@ public class CMMSingleStatement implements CMMStatement {
 	public void setBody(String body) {
 		this.body = body;
 	}
+
+	@Override
+	public CMMStatementType getType() {
+		return CMMStatementType.SINGLE;
+	}
 	
 }

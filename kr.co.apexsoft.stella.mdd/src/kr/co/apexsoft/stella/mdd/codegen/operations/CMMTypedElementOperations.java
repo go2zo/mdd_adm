@@ -10,7 +10,7 @@ public class CMMTypedElementOperations extends CMMElementOperations {
 		
 	}
 	
-	public static CMMType createCMMType(Type type) {
+	public static CMMType createCMMType(final Type element) {
 		return null;
 	}
 }

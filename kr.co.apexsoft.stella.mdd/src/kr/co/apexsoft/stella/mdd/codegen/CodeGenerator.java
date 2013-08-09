@@ -45,7 +45,7 @@ public class CodeGenerator {
 		monitor.beginTask("Generate", totalWork);
 		
 		CMMTransformer transformer = new CMMTransformer();
-		List<CMMElement> cmmElements = transformer.transform(elements);
+		List<? extends CMMElement> cmmElements = transformer.transform(elements);
 
 		Exporter exporter = new JavaExporter();
 		exporter.export(cmmElements);

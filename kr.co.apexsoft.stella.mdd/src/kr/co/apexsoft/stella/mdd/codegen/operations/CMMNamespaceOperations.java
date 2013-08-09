@@ -10,9 +10,9 @@ public class CMMNamespaceOperations extends CMMElementOperations {
 		
 	}
 	
-	public static CMMNamespace createCMMNamespace(final Namespace _namespace) {
-		String uri = getFullPath(_namespace);
-		return new CMMNamespace(uri, _namespace.separator());
+	public static CMMNamespace createCMMNamespace(final Namespace element) {
+		String uri = getFullPath(element);
+		return new CMMNamespace(uri, element.separator());
 	}
 
 }

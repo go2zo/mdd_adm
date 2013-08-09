@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CMMOperation extends CMMRedefinedElement
-		implements CMMAbstractableElement {
+		implements CMMAbstractableElement, CMMStatementableElement {
 
 	private List<CMMParameter> ownedParameters;
 	
@@ -23,6 +23,7 @@ public class CMMOperation extends CMMRedefinedElement
 		return getParameters().add(parameter);
 	}
 	
+	@Override
 	public List<CMMStatement> getStatements() {
 		if (ownedStatements == null) {
 			ownedStatements = new ArrayList<>();
@@ -30,6 +31,7 @@ public class CMMOperation extends CMMRedefinedElement
 		return ownedStatements;
 	}
 	
+	@Override
 	public boolean addStatement(CMMStatement statement) {
 		return getStatements().add(statement);
 	}

@@ -8,6 +8,6 @@ public interface Exporter {
 
 	public void export(CMMElement element);
 	
-	public void export(List<CMMElement> elements);
+	public void export(List<? extends CMMElement> elements);
 	
 }

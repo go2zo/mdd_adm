@@ -21,4 +21,9 @@ public class CMMCallStatement implements CMMStatement {
 	public void setCalledElement(CMMNamedElement calledElement) {
 		this.calledElement = calledElement;
 	}
+
+	@Override
+	public CMMStatementType getType() {
+		return CMMStatementType.CALL;
+	}
 }

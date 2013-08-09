@@ -31,6 +31,11 @@ public class CMMIfStatement extends CMMContainerStatement implements Iterator<CM
 	@Override
 	public void remove() {
 		
-	}	
+	}
+
+	@Override
+	public CMMStatementType getType() {
+		return CMMStatementType.DECISION_MARKING;
+	}
 
 }

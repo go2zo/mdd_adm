@@ -1,0 +1,13 @@
+<config>
+	<context-values>
+		<resource path="template/VM_global_library.vm">
+			<value key="value" object-class="java.lang.String"/>
+		</resource>
+		<resource path="">
+			<value key="class" object-class="kr.co.apexsoft.stella.cmm.CMMClass"/>
+			<value key="parameter" object-class="kr.co.apexsoft.stella.cmm.CMMParameter"/>
+			<value key="operation" object-class="kr.co.apexsoft.stella.cmm.CMMOperation"/>
+			<value key="attribute" object-class="kr.co.apexsoft.stella.cmm.CMMAttribute"/>
+		</resource>
+	</context-values>
+</config>

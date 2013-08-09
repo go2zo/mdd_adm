@@ -3,9 +3,12 @@ package kr.co.apexsoft.stella.cmm;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CMMPackageableElement extends CMMFinalElement implements CMMType {
+public abstract class CMMPackageableElement extends CMMFinalElement implements
+		CMMType, CMMAbstractableElement {
 
 	private CMMNamespace namespace;
+	
+	private boolean isAbstract;
 	
 	private List<CMMPackageableElement> importElements;
 	private List<CMMClass> inheritances;
@@ -48,6 +51,16 @@ public abstract class CMMPackageableElement extends CMMFinalElement implements C
 		}
 		sb.append(getName());
 		return sb.toString();
+	}
+	
+	@Override
+	public boolean isAbstract() {
+		return isAbstract;
+	}
+
+	@Override
+	public void setAbstract(boolean isAbstract) {
+		this.isAbstract = isAbstract;
 	}
 
 }

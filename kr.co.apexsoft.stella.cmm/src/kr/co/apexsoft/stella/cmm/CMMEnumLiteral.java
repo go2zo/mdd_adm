@@ -1,6 +1,6 @@
 package kr.co.apexsoft.stella.cmm;
 
-public class CMMEnumElement extends CMMAbstractElement {
+public class CMMEnumLiteral extends CMMAbstractElement {
 
 	private int value;
 	

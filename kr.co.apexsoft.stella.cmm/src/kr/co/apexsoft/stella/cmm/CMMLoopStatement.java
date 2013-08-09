@@ -31,5 +31,10 @@ public class CMMLoopStatement extends CMMContainerStatement {
 	public void setUpdate(String update) {
 		this.update = update;
 	}
+
+	@Override
+	public CMMStatementType getType() {
+		return CMMStatementType.LOOP;
+	}
 	
 }

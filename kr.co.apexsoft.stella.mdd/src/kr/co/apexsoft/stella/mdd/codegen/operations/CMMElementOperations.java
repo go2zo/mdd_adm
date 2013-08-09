@@ -3,6 +3,7 @@ package kr.co.apexsoft.stella.mdd.codegen.operations;
 import kr.co.apexsoft.stella.cmm.CMMVisibilityKind;
 import kr.co.apexsoft.stella.mdd.util.CMMUtil;
 
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.VisibilityKind;
 
 public class CMMElementOperations extends CMMUtil {
@@ -24,6 +25,10 @@ public class CMMElementOperations extends CMMUtil {
 		default:
 			return CMMVisibilityKind.PUBLIC;	
 		}
+	}
+	
+	protected static String getDescription(final Element element) {
+		return ""; //TODO
 	}
 	
 }

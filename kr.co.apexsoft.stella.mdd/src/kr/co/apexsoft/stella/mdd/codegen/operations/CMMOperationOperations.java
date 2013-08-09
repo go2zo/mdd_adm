@@ -15,25 +15,25 @@ public class CMMOperationOperations extends CMMTypedElementOperations {
 		
 	}
 	
-	public static CMMOperation createCMMOperation(final Operation _operation) {
+	public static CMMOperation createCMMOperation(final Operation element) {
 		CMMOperation cmmOp = new CMMOperation();
 		
-		cmmOp.setName(_operation.getName());
-		cmmOp.setDescription(""); // TODO
+		cmmOp.setName(element.getName());
+		cmmOp.setDescription(getDescription(element));
 		
-		Parameter returnResult = _operation.getReturnResult();
+		Parameter returnResult = element.getReturnResult();
 		if (returnResult != null) {
 			cmmOp.setReturnValue(createCMMType(returnResult.getType()));
 		}
 		
-		cmmOp.setAbstract(_operation.isAbstract());
-		cmmOp.setFinal(_operation.isLeaf());
-		cmmOp.setStatic(_operation.isStatic());
+		cmmOp.setAbstract(element.isAbstract());
+		cmmOp.setFinal(element.isLeaf());
+		cmmOp.setStatic(element.isStatic());
 		
-		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(_operation.getVisibility());
+		CMMVisibilityKind visibilityKind = getCMMVisibilityKind(element.getVisibility());
 		cmmOp.setVisibilityKind(visibilityKind);
 		
-		List<Parameter> parameters = _operation.getOwnedParameters();
+		List<Parameter> parameters = element.getOwnedParameters();
 		for (Parameter param : parameters) {
 			CMMParameter cmmParam = CMMParameterOperations.createCMMParameter(param);
 			cmmOp.getParameters().add(cmmParam);

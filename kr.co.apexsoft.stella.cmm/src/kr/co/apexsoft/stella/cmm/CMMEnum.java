@@ -5,16 +5,16 @@ import java.util.List;
 
 public class CMMEnum extends CMMPackageableElement {
 
-	private List<CMMEnumElement> enumElements;
+	private List<CMMEnumLiteral> enumElements;
 	
-	public List<CMMEnumElement> getEnumElements() {
+	public List<CMMEnumLiteral> getEnumElements() {
 		if (enumElements == null) {
 			enumElements = new ArrayList<>();
 		}
 		return enumElements;
 	}
 	
-	public boolean addEnumElement(CMMEnumElement enumElement) {
+	public boolean addEnumElement(CMMEnumLiteral enumElement) {
 		return getEnumElements().add(enumElement);
 	}
 	
